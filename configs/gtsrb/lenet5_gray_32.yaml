@@ -1,0 +1,13 @@
+# Udacity-style LeNet-5 baseline on GTSRB (grayscale 32x32), official train/test split.
+# Reference: hundreds of Udacity SDC Nanodegree repositories (2016 to 2018) report 91 to 97 percent
+# with this network; see docs/traffic_sign/oss_implementations.md.
+model: lenet5_gray
+image_size: 32
+epochs: 30
+batch_size: 128
+seed: 0
+optimizer: {name: adam, lr: 0.001}
+schedule: cosine
+augmentation:
+  affine: {degrees: 15, translate: 0.1, scale: [0.9, 1.1], shear: 2}
+  photometric: {brightness: 0.4, contrast: 0.4}

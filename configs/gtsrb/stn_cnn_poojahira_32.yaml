@@ -1,0 +1,14 @@
+# Architecture of poojahira/gtsrb-pytorch (STN + 3 conv + 2 FC, 32x32 RGB), reduced training budget
+# for a CPU session: online augmentation instead of the 10x offline copies, 20 epochs instead of 40,
+# Adam 1e-3 with cosine decay instead of Adam 1e-4 + ReduceLROnPlateau, no flips, no test-time
+# augmentation. The repository reports 99.809 percent (private leaderboard, official test set).
+model: stn_cnn_poojahira
+image_size: 32
+epochs: 20
+batch_size: 64
+seed: 0
+optimizer: {name: adam, lr: 0.001}
+schedule: cosine
+augmentation:
+  affine: {degrees: 15, translate: 0.1, scale: [0.9, 1.1], shear: 2}
+  photometric: {brightness: 0.4, contrast: 0.4}
