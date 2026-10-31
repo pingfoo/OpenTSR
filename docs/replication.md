@@ -16,7 +16,7 @@ Status legend: **done** (measured here), **GPU** (prepared, needs a GPU run), **
 | 3 | Autoware fine detector (YOLOX-s 416, v3.0) on synthetic coarse ROIs | S2TLD test | done | recall@IoU0.5 39.6 % at the deployed threshold 0.3, 48.2 % at 0.1 |
 | 4 | Autoware whole-image TL detector (YOLOX-s 960, v1.0) | S2TLD test | done | class-agnostic AP50 8.0 %, AP30 19.4 % |
 | 5 | COCO-pretrained YOLO11n, `traffic light` class, 1280 px | S2TLD test | done | class-agnostic AP50 65.9 %, AP30 72.2 % |
-| 6 | DetectionBench `lisa-yolo26n` (`yolo val`, test split) | LISA (HF export) | done / in progress, see section 6 | reported mAP@50 23.74 |
+| 6 | DetectionBench `lisa-yolo26n` (`yolo val`, test split) | LISA (HF export, 22,481 test frames) | done | measured mAP@50 24.78 vs reported 23.74 (mAP@50-95 10.72 vs 10.57): reproduced |
 | 7 | YOLO11s / YOLO11n fine-tuned on S2TLD (`configs/s2tld/*.yaml`) | S2TLD, both splits | GPU | SCRDet++ reference: 93 to 96 mAP@0.5 on a random 6:4 split |
 | 8 | TLoNY YOLO (3840 px val), ImVisible LytNet V2, OpenLenda | HF / Google Drive / GitHub | not started | see `docs/oss_implementations.md` F2, F3, F5 |
 
@@ -112,9 +112,9 @@ under 16 px 6.7 %, 16 to 32 px 23.3 %, 32 to 64 px 40.1 %, 64 px and above 49.2 
 
 Reading: TIER IV reports AP 0.915 / recall 0.971 for `traffic_light` on their own ROI-crop test
 set (AWML `YOLOX_opt-S-TrafficLight` v1, private data). On S2TLD the same weights find fewer than
-half of the lights at the deployed threshold, and the boxes they do find overlap S2TLD's
-annotations loosely (mean IoU 0.35 to 0.43; S2TLD boxes are drawn around the whole housing while
-the Autoware detector appears to prefer tighter boxes). A map-prior pipeline therefore does not
+half of the lights at the deployed threshold. The mean IoU column counts a miss as 0; among ROIs
+where something was found the mean IoU is about 0.65 (0.353 / 0.545), so localisation of the
+found lights is acceptable and the problem is recall. A map-prior pipeline therefore does not
 remove the need for region-specific detector training.
 
 ## 5. Whole-image detectors on S2TLD frames (done)
@@ -136,16 +136,41 @@ whole-image model, trained on about 17 k Japanese frames at 960 px, does not tra
 camera and country at all (AP50 8 %), which quantifies the domain gap OpenTSR has to close
 either with multi-region data or with generated data.
 
-## 6. DetectionBench `lisa-yolo26n` on the LISA test split (in progress)
+## 6. DetectionBench `lisa-yolo26n` on the LISA test split (done)
 
-Target: mAP@50 23.74, mAP@50-95 10.57, precision 37.23, recall 25.7 on the `test` split of
-`dronefreak/LISA-Traffic-Lights` (model card of `dronefreak/lisa-yolo26n`, AGPL-3.0,
-`best.pt` sha256 `6eeca4dece2d433c629fcf14ef2b260c7cd249b527e31a75a50b93e112d47f66`).
-Protocol: `scripts/prepare_lisa_hf.py` (writes YOLO label files from the export's
-`metadata.jsonl`), then
-`yolo val model=weights/detectionbench/lisa-yolo26n_best.pt data=data/lisa_hf/data/data_abs.yaml split=test imgsz=640 batch=8 device=cpu plots=False`.
-The dataset is CC BY-NC-SA 4.0 and is used for evaluation only. Result: see the end of this
-file; the 22,481-image test split takes about an hour on 2 CPU cores.
+The one candidate where weights, the exact evaluation split and the evaluation protocol are all
+public (`docs/oss_implementations.md`, F1). Model card of `dronefreak/lisa-yolo26n` (AGPL-3.0,
+`best.pt` sha256 `6eeca4dece2d433c629fcf14ef2b260c7cd249b527e31a75a50b93e112d47f66`, trained
+with Ultralytics 8.4.110 at 640 px): mAP@50 23.74, mAP@50-95 10.57, precision 37.23, recall 25.7
+on the `test` split of `dronefreak/LISA-Traffic-Lights` (22,481 images, 57,649 boxes, 1280x960,
+CC BY-NC-SA 4.0, evaluation only).
+
+Protocol here: `scripts/prepare_lisa_hf.py` (writes `data_abs.yaml`), then
+`scripts/eval_lisa_yolo.py`, which is plain `model.val(split="test", imgsz=640, batch=8)` with
+Ultralytics 8.4.194 on CPU (33 min).
+
+| Metric | Reported (model card) | Measured here |
+|---|---|---|
+| mAP@50 | 23.74 | **24.78** |
+| mAP@50-95 | 10.57 | 10.72 |
+| precision | 37.23 | 38.20 |
+| recall | 25.7 | 26.14 |
+| per-class mAP@50: go / stop / warning | 59.94 / 52.54 / 37.13 | 60.65 / 54.63 / 40.55 |
+| per-class mAP@50: goLeft / stopLeft / goForward / warningLeft | 6.2 / 10.25 / 0.0 / 0.14 | 7.49 / 10.14 / 0.0 / 0.02 |
+
+Reproduced within about one mAP point; the small upward difference is consistent with the newer
+Ultralytics version used for validation (post-processing and interpolation details change
+between releases). The numbers themselves say that a 2.6 M parameter detector at 640 px on
+1280x960 frames gets about 60 % AP@50 on the two frequent classes and nothing on the rare
+arrow classes: the LISA export is dominated by tiny lights (6 to 14 px) and by `go` / `stop`.
+
+Pitfall found on the way (now documented in `scripts/prepare_lisa_hf.py` and checked by
+`scripts/check_lisa_hf_labels.py`): the export's `metadata.jsonl` pixel boxes are expressed in a
+640x640 frame, not in the 1280x960 image frame. Label files generated from them without
+rescaling put every box in the wrong place (IoU 0 with the shipped `labels/*.txt`, which are
+correct), and a validation run on such labels scores exactly 0. Rescaling by `W/640, H/640`
+brings the two variants to IoU 0.84 (rounding of 6-pixel boxes); the shipped label files are the
+reference.
 
 ## 7. YOLO11 fine-tuning on S2TLD (GPU, prepared)
 

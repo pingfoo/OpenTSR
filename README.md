@@ -18,7 +18,7 @@ Survey and first replication (October 2026):
 
 - `docs/datasets.md`: survey of public traffic light datasets and the benchmark recommendation.
 - `docs/oss_implementations.md`: survey of open-source implementations with a ranked replication list.
-- `docs/replication.md`: measured numbers for the Autoware models and COCO-pretrained YOLO on S2TLD, plus the GPU runs still to do.
+- `docs/replication.md`: measured numbers for the Autoware models and COCO-pretrained YOLO on S2TLD, a reproduced DetectionBench number on LISA, plus the GPU runs still to do.
 - `configs/s2tld/splits/`: fixed, checked-in S2TLD split manifests.
 
 ## Quick start
@@ -31,6 +31,8 @@ pip install -r requirements.txt
 make s2tld               # download S2TLD (1.4 GB) and build the split manifests + YOLO datasets
 make autoware-weights    # Autoware TLR models from Hugging Face (Apache-2.0)
 make replicate-autoware  # CPU evaluations reported in docs/replication.md
+make replicate-coco      # COCO-pretrained YOLO11n localisation baseline on S2TLD
+make replicate-lisa      # DetectionBench lisa-yolo26n on the LISA test split (5 GB download)
 make smoke               # 1-epoch CPU check of the YOLO training pipeline
 make train-s2tld         # GPU: YOLO11s baselines on both S2TLD splits
 ```
