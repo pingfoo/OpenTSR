@@ -1,0 +1,19 @@
+# Smaller baseline (YOLO11n) for edge deployment comparisons; same split and schedule as yolo11s.
+# Run: python scripts/train_yolo.py --config configs/s2tld/yolo11n_1280_chunked.yaml
+name: s2tld_yolo11n_1280_chunked
+model: yolo11n.pt
+data: data/s2tld/yolo/chunked/data.yaml
+split_manifest: configs/s2tld/splits/chunked_60_10_30_seed0.json
+eval_split: test
+train:
+  imgsz: 1280
+  epochs: 60
+  batch: 16
+  seed: 0
+  deterministic: true
+  optimizer: auto
+  lr0: 0.01
+  patience: 20
+  close_mosaic: 10
+  workers: 4
+  pretrained: true
