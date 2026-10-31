@@ -8,7 +8,7 @@ This gives the "free" baseline every open detector starts from before any traffi
 specific fine-tuning.
 
 Weights are downloaded by Ultralytics from its GitHub releases (AGPL-3.0 code and weights,
-see docs/third_party.md).
+see traffic_lights/docs/third_party.md).
 """
 
 from __future__ import annotations
@@ -22,10 +22,10 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from opentsr.datasets.s2tld import load_s2tld  # noqa: E402
-from opentsr.datasets.splits import read_manifest  # noqa: E402
+from opentsr.traffic_lights.datasets.s2tld import load_s2tld  # noqa: E402
+from opentsr.splits import read_manifest  # noqa: E402
 from opentsr.metrics import Detection, GroundTruth, iou_xyxy, voc_ap_per_class  # noqa: E402
 
 COCO_TRAFFIC_LIGHT = 9
@@ -36,7 +36,7 @@ def main() -> None:
     ap.add_argument("--weights", default="yolo11n.pt")
     ap.add_argument("--imgsz", type=int, default=1280)
     ap.add_argument("--conf", type=float, default=0.001)
-    ap.add_argument("--s2tld", type=Path, default=Path("data/s2tld"))
+    ap.add_argument("--s2tld", type=Path, default=Path("data/traffic_lights/s2tld"))
     ap.add_argument("--manifest", type=Path, required=True)
     ap.add_argument("--split", default="test")
     ap.add_argument("--limit", type=int, default=0)

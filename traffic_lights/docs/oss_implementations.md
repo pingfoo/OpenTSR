@@ -10,7 +10,7 @@ How to read this file: section 0 is the summary, A covers production stacks (Aut
 openpilot), B the tooling shipped with datasets, C paper code with weights, D community
 repositories and Hugging Face models, E leaderboards and surveys, and F ranks the replication
 candidates. What we actually replicated, and the numbers we measured, is in
-`docs/replication.md`; the datasets themselves are in `docs/datasets.md`.
+`traffic_lights/docs/replication.md`; the datasets themselves are in `traffic_lights/docs/datasets.md`.
 
 Notes on verification limits: github.com HTML and api.github.com were not reachable from the
 research sandbox (git clone and raw.githubusercontent.com were), paperswithcode.com is offline
@@ -54,7 +54,7 @@ Model artifacts (all on Hugging Face now)
 
 Evaluation script: none in autoware_universe (the ROS nodes only infer). Reproducible evaluation exists only in AWML (below), against private T4dataset splits.
 
-Measured during the survey (onnxruntime CPU, 2 threads, random input, mean of 5 runs): fine detector 416x416 60.6 ms/img; MobileNetV2 classifier 224x224 5.1 ms/img; whole-image detector 960x960 333.9 ms/img. Accuracy measured on public data (TIER IV sample crops and S2TLD) is in `docs/replication.md`; the published 99.81% is on TIER IV internal test data and cannot be reproduced.
+Measured during the survey (onnxruntime CPU, 2 threads, random input, mean of 5 runs): fine detector 416x416 60.6 ms/img; MobileNetV2 classifier 224x224 5.1 ms/img; whole-image detector 960x960 333.9 ms/img. Accuracy measured on public data (TIER IV sample crops and S2TLD) is in `traffic_lights/docs/replication.md`; the published 99.81% is on TIER IV internal test data and cannot be reproduced.
 
 ### A2. TIER IV AWML (training pipelines for the Autoware TLR models)
 
@@ -248,7 +248,7 @@ Takeaway: apart from Autoware, DetectionBench and TLoNY, HF traffic light models
 - Papers with Code: offline. paperswithcode.com/task/traffic-light-detection and paperswithcode.com/ redirect to https://huggingface.co/papers/trending (curl follow-redirect check, 2026-10-31); no Wayback snapshot exists for the traffic-light-detection task page; the traffic-sign-recognition page has a 2025-03-21 snapshot at http://web.archive.org/web/20250321025853/https://paperswithcode.com/task/traffic-sign-recognition .
 - Survey: Pavlitska, Lambing, Bangaru, Zöllner, "Traffic Light Recognition using Convolutional Neural Networks: A Survey" (https://arxiv.org/pdf/2309.02158, KIT/FZI, ITSC 2023). Table II (selected): Behrendt 2017 BSTLD F1 about 80%; Weber HDTLR 2018 BSTLD F1 85.8%; Müller and Dietmayer 2018 DTLD recall 95%; Pon et al. 2018 BSTLD mAP 53%; Bach et al. 2018 DTLD mAP 83%; Kim et al. 2018 BSTLD mAP 38.48%; Lu et al. 2018 LISA mAP 91.1%; Possatti 2019 DTLD mAP 85.62%, LISA 50.59%; Gokul et al. 2020 BSTLD mAP 48.64%; Wang et al. 2022 LISA mAP 82.15%, LaRa 79.97%; Zhao et al. 2022 S2TLD mAP 71.24%; Mostafa et al. 2022 LISA mAP 92.16%; Liu and Li 2023 BSTLD mAP 81.5%. Metrics, splits and class sets differ between rows, so the table is not a leaderboard. Code availability flagged for only three works.
 - Cross-dataset tables with a fixed protocol: TLD-READY (C6, BSTLD/LISA/HDTLR/DTLD with YOLOv7/v8 and RT-DETR), ACCV 2022 DLSOD workshop (B5, WPI/LISA/BOSCH/S2TLD with six detectors), DetectionBench LEADERBOARDS.md (C10, LISA), ATLAS (C6, DTLD/ATLAS with YOLOv8 to YOLO11).
-- A Hugging Face Hub search for "traffic light" datasets (2026-10-31) returned 21 entries; the ones that matter are shpotes/bosch-small-traffic-lights-dataset, dronefreak/LISA-Traffic-Lights, mehmetkeremturkcan/traffic-lights-of-new-york and yangxue/S2TLD (see `docs/datasets.md`, section 9).
+- A Hugging Face Hub search for "traffic light" datasets (2026-10-31) returned 21 entries; the ones that matter are shpotes/bosch-small-traffic-lights-dataset, dronefreak/LISA-Traffic-Lights, mehmetkeremturkcan/traffic-lights-of-new-york and yangxue/S2TLD (see `traffic_lights/docs/datasets.md`, section 9).
 
 ## F. Replication candidates (ranked)
 
@@ -293,13 +293,13 @@ cd ~/ImVisible/Model && python3 testing.py
 ```
 
 ### F4. Autoware Universe TLR models (AutowareFoundation on Hugging Face)
-- Why: production models, Apache-2.0, ONNX that runs on CPU (measured 61 ms detector / 5 ms classifier / 334 ms whole-image detector per image), pinned tags (`--revision v3.0`, `v4.0`, `v1.0`). What is missing is public evaluation data: the published 99.81% / 99.10% (classifier) and AWML mAP 0.792 at IoU 0.5 on ROI crops (fine detector) are on TIER IV internal data. A faithful replication is impossible; the substitute implemented in this repository (`scripts/eval_autoware_*.py`, results in `docs/replication.md`) is (a) the colour-only check on the Autoware sample crops and (b) cross-domain accuracy on S2TLD: classifier accuracy on ground-truth crops, fine-detector recall on synthetic coarse ROIs, and class-agnostic AP of the 960x960 whole-image detector. This benchmarks a Japanese-trained model on another country and gives OpenTSR a baseline to beat.
+- Why: production models, Apache-2.0, ONNX that runs on CPU (measured 61 ms detector / 5 ms classifier / 334 ms whole-image detector per image), pinned tags (`--revision v3.0`, `v4.0`, `v1.0`). What is missing is public evaluation data: the published 99.81% / 99.10% (classifier) and AWML mAP 0.792 at IoU 0.5 on ROI crops (fine detector) are on TIER IV internal data. A faithful replication is impossible; the substitute implemented in this repository (`traffic_lights/scripts/eval_autoware_*.py`, results in `traffic_lights/docs/replication.md`) is (a) the colour-only check on the Autoware sample crops and (b) cross-domain accuracy on S2TLD: classifier accuracy on ground-truth crops, fine-detector recall on synthetic coarse ROIs, and class-agnostic AP of the 960x960 whole-image detector. This benchmarks a Japanese-trained model on another country and gives OpenTSR a baseline to beat.
 ```
 hf download AutowareFoundation/traffic_light_classifier --revision v4.0 --local-dir ~/aw_cls
 hf download AutowareFoundation/traffic_light_fine_detector --revision v3.0 --local-dir ~/aw_det
 hf download AutowareFoundation/tensorrt_yolox --revision v1.0 --include "yolox_s_car_ped_tl_detector_960_960_batch_1.onnx" "car_ped_tl_detector_labels.txt" --local-dir ~/aw_whole
 curl -O https://autoware-files.s3.us-west-2.amazonaws.com/dataset/traffic_light_sample_dataset.tar.gz && tar xzf traffic_light_sample_dataset.tar.gz
-python scripts/eval_autoware_classifier.py --folder traffic_light_sample_dataset/val --out runs/replication/sample_val.json
+python traffic_lights/scripts/eval_autoware_classifier.py --folder traffic_light_sample_dataset/val --out runs/traffic_lights/replication/sample_val.json
 ```
   For the detectors, decode the `[N,8]` YOLOX output as (cx, cy, w, h, obj, 3 class scores) on strides 8/16/32 grids (416 px: 52x52+26x26+13x13 = 3549 cells; 960 px: 120x120+60x60+30x30 = 18900), multiply obj by class score, apply NMS 0.65 (fine) or 0.7 (whole image) with score thresholds 0.3 / 0.35, then compute AP with pycocotools against S2TLD or LISA boxes collapsed to one class.
 

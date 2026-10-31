@@ -7,12 +7,12 @@ The export ``dronefreak/LISA-Traffic-Lights`` ships both ``metadata.jsonl`` (pix
 the ``.txt`` files are correct (they put the boxes on the lights). This script quantifies the
 disagreement (IoU between the two variants, with the metadata boxes used as-is) and evaluates a
 detector against both variants with the in-repo VOC AP, so the effect of picking the wrong one
-can be seen directly. See ``scripts/prepare_lisa_hf.py`` for the rescaling.
+can be seen directly. See ``traffic_lights/scripts/prepare_lisa_hf.py`` for the rescaling.
 
 Usage::
 
-    python scripts/check_lisa_hf_labels.py --weights weights/detectionbench/lisa-yolo26n_best.pt \
-        --shard data/lisa_hf/data/images/test/shard_000 --out runs/replication/lisa_label_check.json
+    python traffic_lights/scripts/check_lisa_hf_labels.py --weights weights/traffic_lights/detectionbench/lisa-yolo26n_best.pt \
+        --shard data/traffic_lights/lisa_hf/data/images/test/shard_000 --out runs/traffic_lights/replication/lisa_label_check.json
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from opentsr.metrics import Detection, GroundTruth, iou_xyxy, voc_ap_per_class  # noqa: E402
 

@@ -25,19 +25,19 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from opentsr.datasets.s2tld import load_s2tld  # noqa: E402
-from opentsr.datasets.splits import read_manifest  # noqa: E402
+from opentsr.traffic_lights.datasets.s2tld import load_s2tld  # noqa: E402
+from opentsr.splits import read_manifest  # noqa: E402
 from opentsr.metrics import Detection, GroundTruth, iou_xyxy, voc_ap_per_class  # noqa: E402
-from opentsr.models.autoware_onnx import AutowareTLFineDetector  # noqa: E402
+from opentsr.traffic_lights.models.autoware_onnx import AutowareTLFineDetector  # noqa: E402
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--onnx", type=Path, default=Path("weights/autoware_whole/yolox_s_car_ped_tl_detector_960_960_batch_1.onnx"))
-    ap.add_argument("--labels", type=Path, default=Path("weights/autoware_whole/car_ped_tl_detector_labels.txt"))
-    ap.add_argument("--s2tld", type=Path, default=Path("data/s2tld"))
+    ap.add_argument("--onnx", type=Path, default=Path("weights/traffic_lights/autoware_whole/yolox_s_car_ped_tl_detector_960_960_batch_1.onnx"))
+    ap.add_argument("--labels", type=Path, default=Path("weights/traffic_lights/autoware_whole/car_ped_tl_detector_labels.txt"))
+    ap.add_argument("--s2tld", type=Path, default=Path("data/traffic_lights/s2tld"))
     ap.add_argument("--manifest", type=Path, required=True)
     ap.add_argument("--split", default="test")
     ap.add_argument("--score-thresh", type=float, default=0.01)

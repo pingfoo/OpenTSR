@@ -3,9 +3,9 @@
 What we ran, how, and what came out. Every number below was produced by a script in this
 repository on 2026-10-31 in a claude.ai cloud session (2 vCPU, 7 GB RAM, no GPU; Python 3.13,
 onnxruntime 1.31.1, Ultralytics 8.4.194, torch 2.15.0+cpu). Raw JSON outputs are in
-`runs/replication/` (gitignored); the commands are in the `Makefile`. See
-`docs/oss_implementations.md` for why these implementations were chosen and
-`docs/datasets.md` for the data.
+`runs/traffic_lights/replication/` (gitignored); the commands are in `traffic_lights/Makefile` (run from the repository root as `make lights-<target>`). See
+`traffic_lights/docs/oss_implementations.md` for why these implementations were chosen and
+`traffic_lights/docs/datasets.md` for the data.
 
 Status legend: **done** (measured here), **GPU** (prepared, needs a GPU run), **blocked**.
 
@@ -17,14 +17,14 @@ Status legend: **done** (measured here), **GPU** (prepared, needs a GPU run), **
 | 4 | Autoware whole-image TL detector (YOLOX-s 960, v1.0) | S2TLD test | done | class-agnostic AP50 8.0 %, AP30 19.4 % |
 | 5 | COCO-pretrained YOLO11n, `traffic light` class, 1280 px | S2TLD test | done | class-agnostic AP50 65.9 %, AP30 72.2 % |
 | 6 | DetectionBench `lisa-yolo26n` (`yolo val`, test split) | LISA (HF export, 22,481 test frames) | done | measured mAP@50 24.78 vs reported 23.74 (mAP@50-95 10.72 vs 10.57): reproduced |
-| 7 | YOLO11s / YOLO11n fine-tuned on S2TLD (`configs/s2tld/*.yaml`) | S2TLD, both splits | GPU | SCRDet++ reference: 93 to 96 mAP@0.5 on a random 6:4 split |
-| 8 | TLoNY YOLO (3840 px val), ImVisible LytNet V2, OpenLenda | HF / Google Drive / GitHub | not started | see `docs/oss_implementations.md` F2, F3, F5 |
+| 7 | YOLO11s / YOLO11n fine-tuned on S2TLD (`traffic_lights/configs/s2tld/*.yaml`) | S2TLD, both splits | GPU | SCRDet++ reference: 93 to 96 mAP@0.5 on a random 6:4 split |
+| 8 | TLoNY YOLO (3840 px val), ImVisible LytNet V2, OpenLenda | HF / Google Drive / GitHub | not started | see `traffic_lights/docs/oss_implementations.md` F2, F3, F5 |
 
 ## 1. Protocol shared by the S2TLD experiments
 
 - Data: S2TLD, both resolution subsets, downloaded from the author's Hugging Face mirror
-  (checksums in `scripts/prepare_s2tld.py`), 5,786 images / 14,130 boxes.
-- Split: `configs/s2tld/splits/chunked_60_10_30_seed0.json` (contiguous 100-frame chunks per
+  (checksums in `traffic_lights/scripts/prepare_s2tld.py`), 5,786 images / 14,130 boxes.
+- Split: `traffic_lights/configs/s2tld/splits/chunked_60_10_30_seed0.json` (contiguous 100-frame chunks per
   camera sequence, seed 0): train 3,386 / val 600 / test 1,800 images. The test split holds
   4,497 boxes: red 2,334, green 1,855, off 215, yellow 59, wait_on 34 (counts from the
   classifier run). All numbers below are on this test split unless stated.
@@ -36,7 +36,7 @@ Status legend: **done** (measured here), **GPU** (prepared, needs a GPU run), **
 
 ## 2. Autoware MobileNetV2 state classifier on ground-truth crops (done)
 
-Script: `scripts/eval_autoware_classifier.py`. Model: `traffic_light_classifier_mobilenetv2_batch_1.onnx`
+Script: `traffic_lights/scripts/eval_autoware_classifier.py`. Model: `traffic_light_classifier_mobilenetv2_batch_1.onnx`
 from `AutowareFoundation/traffic_light_classifier` tag `v4.0` (11 car labels). Each S2TLD box is
 cropped with no margin, converted to RGB, preprocessed as the Autoware node does (letterbox to
 224 with `scale = min(224/w, 224/h)`, bilinear, zero padding bottom/right, mean
@@ -84,7 +84,7 @@ red 62.0, yellow 43.7; most misses are `unknown`), stretch 81.9 % (green 86.6, r
 
 ## 4. Autoware YOLOX-s fine detector on synthetic coarse ROIs (done)
 
-Script: `scripts/eval_autoware_fine_detector.py`. Model: `tlr_car_ped_yolox_s_batch_1.onnx`
+Script: `traffic_lights/scripts/eval_autoware_fine_detector.py`. Model: `tlr_car_ped_yolox_s_batch_1.onnx`
 (`AutowareFoundation/traffic_light_fine_detector` tag `v3.0`). In Autoware this model refines
 coarse ROIs projected from the HD map. Without a map we build one coarse ROI per ground-truth
 box: the box scaled by `roi_scale` around its centre (at least 96 px per side), shifted by a
@@ -119,7 +119,7 @@ remove the need for region-specific detector training.
 
 ## 5. Whole-image detectors on S2TLD frames (done)
 
-Scripts: `scripts/eval_autoware_whole_image_detector.py` and `scripts/eval_coco_pretrained_yolo.py`.
+Scripts: `traffic_lights/scripts/eval_autoware_whole_image_detector.py` and `traffic_lights/scripts/eval_coco_pretrained_yolo.py`.
 
 | Detector | Input | AP50 (class-agnostic) | AP30 | Recall@IoU0.5 at deployment threshold | FP per image | ms/image (CPU) |
 |---|---|---|---|---|---|---|
@@ -139,14 +139,14 @@ either with multi-region data or with generated data.
 ## 6. DetectionBench `lisa-yolo26n` on the LISA test split (done)
 
 The one candidate where weights, the exact evaluation split and the evaluation protocol are all
-public (`docs/oss_implementations.md`, F1). Model card of `dronefreak/lisa-yolo26n` (AGPL-3.0,
+public (`traffic_lights/docs/oss_implementations.md`, F1). Model card of `dronefreak/lisa-yolo26n` (AGPL-3.0,
 `best.pt` sha256 `6eeca4dece2d433c629fcf14ef2b260c7cd249b527e31a75a50b93e112d47f66`, trained
 with Ultralytics 8.4.110 at 640 px): mAP@50 23.74, mAP@50-95 10.57, precision 37.23, recall 25.7
 on the `test` split of `dronefreak/LISA-Traffic-Lights` (22,481 images, 57,649 boxes, 1280x960,
 CC BY-NC-SA 4.0, evaluation only).
 
-Protocol here: `scripts/prepare_lisa_hf.py` (writes `data_abs.yaml`), then
-`scripts/eval_lisa_yolo.py`, which is plain `model.val(split="test", imgsz=640, batch=8)` with
+Protocol here: `traffic_lights/scripts/prepare_lisa_hf.py` (writes `data_abs.yaml`), then
+`traffic_lights/scripts/eval_lisa_yolo.py`, which is plain `model.val(split="test", imgsz=640, batch=8)` with
 Ultralytics 8.4.194 on CPU (33 min).
 
 | Metric | Reported (model card) | Measured here |
@@ -164,8 +164,8 @@ between releases). The numbers themselves say that a 2.6 M parameter detector at
 1280x960 frames gets about 60 % AP@50 on the two frequent classes and nothing on the rare
 arrow classes: the LISA export is dominated by tiny lights (6 to 14 px) and by `go` / `stop`.
 
-Pitfall found on the way (now documented in `scripts/prepare_lisa_hf.py` and checked by
-`scripts/check_lisa_hf_labels.py`): the export's `metadata.jsonl` pixel boxes are expressed in a
+Pitfall found on the way (now documented in `traffic_lights/scripts/prepare_lisa_hf.py` and checked by
+`traffic_lights/scripts/check_lisa_hf_labels.py`): the export's `metadata.jsonl` pixel boxes are expressed in a
 640x640 frame, not in the 1280x960 image frame. Label files generated from them without
 rescaling put every box in the wrong place (IoU 0 with the shipped `labels/*.txt`, which are
 correct), and a validation run on such labels scores exactly 0. Rescaling by `W/640, H/640`
@@ -179,19 +179,19 @@ writes `metrics_test.json`; the numbers of a smoke run are meaningless and are n
 
 | Config | Split | Expected run | Compare with |
 |---|---|---|---|
-| `configs/s2tld/yolo11s_1280_random60.yaml` | random 6:4 (`random60_seed0.json`) | 60 epochs at 1280 px, batch 8; roughly 1 to 2 h on an RTX 4090 class GPU, longer on Apple MPS | SCRDet++ Table 4: RetinaNet 93.25, FPN 94.93 (+InLD 95.94) mAP@0.5 on their own random 6:4 split (same leakage) |
-| `configs/s2tld/yolo11s_1280_chunked.yaml` | chunked 60/10/30 | same | OpenTSR benchmark number (no published reference; expect lower than the random split) |
-| `configs/s2tld/yolo11n_1280_chunked.yaml` | chunked | about half the time | edge-size reference |
+| `traffic_lights/configs/s2tld/yolo11s_1280_random60.yaml` | random 6:4 (`random60_seed0.json`) | 60 epochs at 1280 px, batch 8; roughly 1 to 2 h on an RTX 4090 class GPU, longer on Apple MPS | SCRDet++ Table 4: RetinaNet 93.25, FPN 94.93 (+InLD 95.94) mAP@0.5 on their own random 6:4 split (same leakage) |
+| `traffic_lights/configs/s2tld/yolo11s_1280_chunked.yaml` | chunked 60/10/30 | same | OpenTSR benchmark number (no published reference; expect lower than the random split) |
+| `traffic_lights/configs/s2tld/yolo11n_1280_chunked.yaml` | chunked | about half the time | edge-size reference |
 
-Command on the GPU machine (from the repository root, after `make s2tld`):
+Command on the GPU machine (from the repository root, after `make lights-s2tld`):
 
 ```bash
-python scripts/train_yolo.py --config configs/s2tld/yolo11s_1280_random60.yaml   # device auto
-python scripts/train_yolo.py --config configs/s2tld/yolo11s_1280_chunked.yaml
-python scripts/train_yolo.py --config configs/s2tld/yolo11n_1280_chunked.yaml
+python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11s_1280_random60.yaml   # device auto
+python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11s_1280_chunked.yaml
+python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11n_1280_chunked.yaml
 ```
 
-Each run writes `runs/<name>/metrics_test.json` with mAP50 / mAP50-95 per class, the config,
+Each run writes `runs/traffic_lights/<name>/metrics_test.json` with mAP50 / mAP50-95 per class, the config,
 the git commit and package versions; copy the table into this file and commit. Ultralytics
 reports COCO-style 101-point interpolated AP; for the SCRDet++ comparison recompute VOC AP from
 the saved predictions with `src/opentsr/metrics.py` (follow-up).

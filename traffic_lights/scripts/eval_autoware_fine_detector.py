@@ -33,12 +33,12 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from opentsr.datasets.s2tld import load_s2tld  # noqa: E402
-from opentsr.datasets.splits import read_manifest  # noqa: E402
+from opentsr.traffic_lights.datasets.s2tld import load_s2tld  # noqa: E402
+from opentsr.splits import read_manifest  # noqa: E402
 from opentsr.metrics import iou_xyxy  # noqa: E402
-from opentsr.models.autoware_onnx import AutowareTLFineDetector  # noqa: E402
+from opentsr.traffic_lights.models.autoware_onnx import AutowareTLFineDetector  # noqa: E402
 
 
 def make_roi(b, width, height, scale, min_side, jitter, rng):
@@ -55,9 +55,9 @@ def make_roi(b, width, height, scale, min_side, jitter, rng):
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--onnx", type=Path, default=Path("weights/autoware/tlr_car_ped_yolox_s_batch_1.onnx"))
-    ap.add_argument("--labels", type=Path, default=Path("weights/autoware/tlr_labels.txt"))
-    ap.add_argument("--s2tld", type=Path, default=Path("data/s2tld"))
+    ap.add_argument("--onnx", type=Path, default=Path("weights/traffic_lights/autoware/tlr_car_ped_yolox_s_batch_1.onnx"))
+    ap.add_argument("--labels", type=Path, default=Path("weights/traffic_lights/autoware/tlr_labels.txt"))
+    ap.add_argument("--s2tld", type=Path, default=Path("data/traffic_lights/s2tld"))
     ap.add_argument("--manifest", type=Path, required=True)
     ap.add_argument("--split", default="test")
     ap.add_argument("--roi-scale", type=float, default=4.0)

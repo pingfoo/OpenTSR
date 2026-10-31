@@ -2,7 +2,7 @@
 """Train and evaluate an Ultralytics YOLO detector from an OpenTSR config.
 
 The config (YAML) names the base weights, the YOLO ``data.yaml`` produced by
-``scripts/prepare_s2tld.py``, the split manifest it came from, and the training arguments.
+``traffic_lights/scripts/prepare_s2tld.py``, the split manifest it came from, and the training arguments.
 After training, the best checkpoint is evaluated on ``eval_split`` and the metrics are written
 next to the run as ``metrics_<split>.json`` together with the config, the git commit and the
 package versions, so every number in ``docs/`` maps back to a config and a commit.
@@ -10,13 +10,13 @@ package versions, so every number in ``docs/`` maps back to a config and a commi
 Examples::
 
     # GPU box (lab server or Mac with MPS); device is chosen automatically
-    python scripts/train_yolo.py --config configs/s2tld/yolo11s_1280_chunked.yaml
+    python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11s_1280_chunked.yaml
 
     # CPU smoke test: 1 epoch on 32 images at 640 px, to validate the pipeline only
-    python scripts/train_yolo.py --config configs/s2tld/yolo11n_1280_chunked.yaml --smoke
+    python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11n_1280_chunked.yaml --smoke
 
     # Evaluate an existing checkpoint only
-    python scripts/train_yolo.py --config ... --eval-only runs/s2tld_yolo11s_1280_chunked/weights/best.pt
+    python traffic_lights/scripts/train_yolo.py --config ... --eval-only runs/traffic_lights/s2tld_yolo11s_1280_chunked/weights/best.pt
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def git_commit() -> str:
@@ -117,7 +117,7 @@ def main() -> None:
     ap.add_argument("--device", default=None, help="e.g. 0, cpu, mps; default: Ultralytics auto")
     ap.add_argument("--smoke", action="store_true", help="1 epoch on a 32-image subset at 640 px (pipeline check)")
     ap.add_argument("--eval-only", type=Path, default=None, help="skip training, evaluate these weights")
-    ap.add_argument("--runs-dir", type=Path, default=ROOT / "runs")
+    ap.add_argument("--runs-dir", type=Path, default=ROOT / "runs" / "traffic_lights")
     args = ap.parse_args()
 
     cfg = yaml.safe_load(args.config.read_text())

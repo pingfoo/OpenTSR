@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Download the Autoware traffic light models (Apache-2.0) from Hugging Face, pinned to the
-# tags evaluated in docs/replication.md, and verify their checksums.
+# tags evaluated in traffic_lights/docs/replication.md, and verify their checksums.
 set -euo pipefail
-dst="${1:-weights/autoware}"
+dst="${1:-weights/traffic_lights/autoware}"
 mkdir -p "$dst"
 clf="https://huggingface.co/AutowareFoundation/traffic_light_classifier/resolve/v4.0"
 det="https://huggingface.co/AutowareFoundation/traffic_light_fine_detector/resolve/v3.0"

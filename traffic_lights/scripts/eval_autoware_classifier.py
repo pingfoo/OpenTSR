@@ -29,12 +29,12 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from opentsr.datasets.s2tld import load_s2tld  # noqa: E402
-from opentsr.datasets.splits import read_manifest  # noqa: E402
+from opentsr.traffic_lights.datasets.s2tld import load_s2tld  # noqa: E402
+from opentsr.splits import read_manifest  # noqa: E402
 from opentsr.metrics import accuracy, confusion_matrix  # noqa: E402
-from opentsr.models.autoware_onnx import AutowareTLClassifier  # noqa: E402
+from opentsr.traffic_lights.models.autoware_onnx import AutowareTLClassifier  # noqa: E402
 
 # Autoware car label -> coarse state used by S2TLD / BSTLD style datasets.
 # Any label containing "red" is a red phase (red plus arrows), "unknown" is treated as "off".
@@ -155,8 +155,8 @@ def summarize(y_true, y_pred, y_raw, raw_labels, seconds: float) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--onnx", type=Path, default=Path("weights/autoware/traffic_light_classifier_mobilenetv2_batch_1.onnx"))
-    ap.add_argument("--labels", type=Path, default=Path("weights/autoware/lamp_labels.txt"))
+    ap.add_argument("--onnx", type=Path, default=Path("weights/traffic_lights/autoware/traffic_light_classifier_mobilenetv2_batch_1.onnx"))
+    ap.add_argument("--labels", type=Path, default=Path("weights/traffic_lights/autoware/lamp_labels.txt"))
     ap.add_argument("--folder", type=Path, help="image-folder dataset (one directory per class)")
     ap.add_argument("--s2tld", type=Path, help="S2TLD root (containing extracted/)")
     ap.add_argument("--manifest", type=Path)

@@ -1,10 +1,10 @@
 # OpenTSR baseline: Ultralytics YOLO11s fine-tuned on S2TLD, chunked 60/10/30 split.
-# Run: python scripts/train_yolo.py --config configs/s2tld/yolo11s_1280_chunked.yaml
-# Requires a GPU (a full run on CPU takes days). See docs/replication.md for the handoff.
+# Run: python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11s_1280_chunked.yaml
+# Requires a GPU (a full run on CPU takes days). See traffic_lights/docs/replication.md for the handoff.
 name: s2tld_yolo11s_1280_chunked
 model: yolo11s.pt            # COCO-pretrained, downloaded by Ultralytics
-data: data/s2tld/yolo/chunked/data.yaml
-split_manifest: configs/s2tld/splits/chunked_60_10_30_seed0.json
+data: data/traffic_lights/s2tld/yolo/chunked/data.yaml
+split_manifest: traffic_lights/configs/s2tld/splits/chunked_60_10_30_seed0.json
 eval_split: test
 train:
   imgsz: 1280                 # S2TLD lights are small (median height about 40 px at 720p)

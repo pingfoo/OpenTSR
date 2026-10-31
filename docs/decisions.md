@@ -2,10 +2,12 @@
 
 Dated entries: what was decided, why, and the alternatives considered. Newest last.
 
+Decisions that only concern the traffic light track are in `traffic_lights/docs/decisions.md`.
+
 ## 2026-10-31: Survey first, then replicate; cloud sessions are inference-only
 
 Decided: the first milestone is a written survey of public datasets and open-source
-implementations (`docs/datasets.md`, `docs/oss_implementations.md`), followed by replication of
+implementations (for traffic lights: `traffic_lights/docs/datasets.md`, `traffic_lights/docs/oss_implementations.md`), followed by replication of
 the implementations whose weights and evaluation data are reachable. Cloud (claude.ai) sessions
 have 2 CPU cores and no GPU, so they run inference-only replications and pipeline smoke tests;
 every training run is handed off to the maintainer's machine or a lab GPU with a config under
@@ -18,29 +20,6 @@ later OpenTSR models can be compared against.
 Alternatives considered: starting with model training directly (rejected: no benchmark yet to
 measure against); running training on CPU (rejected: a 60 epoch run at 1280 px on 2 cores would
 take days and would not match a GPU run anyway).
-
-## 2026-10-31: S2TLD is the first replication dataset and the seed of the fixed benchmark
-
-Decided: use S2TLD (SJTU Small Traffic Light Dataset, 5,786 images, 14,130 boxes, five states)
-as the first dataset for replication and as the first component of the fixed OpenTSR benchmark.
-Two split manifests are checked in under `configs/s2tld/splits/`:
-
-- `random60_seed0.json`: random 6:4 train/test, the SCRDet++ (TPAMI 2022) protocol, used only
-  to compare with the paper's numbers.
-- `chunked_60_10_30_seed0.json`: contiguous 100-frame chunks per camera sequence shuffled into
-  train/val/test (60/10/30). Frames in S2TLD are consecutive video frames; a random split puts
-  near-identical frames on both sides and inflates test scores, so the chunked split is the one
-  OpenTSR reports on.
-
-Why: S2TLD is small enough to download in a cloud session (1.4 GB), is hosted by its author on
-Hugging Face with a permissive license in the repository (MIT in the GitHub LICENSE file,
-`apache-2.0` tag on the Hugging Face mirror; no separate data license text), has housing-level
-boxes with state labels including `off`, and was the dataset most other candidates failed on:
-BSTLD is 18 GB and its license is research-oriented, LISA is CC BY-NC-SA 4.0 (non-commercial),
-DTLD requires registration and forbids redistribution, BDD100K requires registration.
-
-Open point: confirm with the S2TLD authors that the MIT license is meant to cover the images and
-annotations, not only the repository, before redistributing any derived labels.
 
 ## 2026-10-31: Evaluation metrics live in the repository, not in a framework
 
@@ -65,16 +44,38 @@ Why: OpenTSR wants commercial use of code, data and weights without copyleft obl
 Weights trained with AGPL-3.0 tooling are treated by Ultralytics as AGPL-3.0 as well, which
 conflicts with an Apache-2.0 release of the weights.
 
-## 2026-10-31: Autoware's released models are the reference production stack to measure first
+## 2026-10-31: The main target is traffic signs; traffic lights become a secondary track
 
-Decided: the Autoware Foundation traffic light classifier (MobileNetV2, v4.0) and fine detector
-(YOLOX-s, v3.0), republished on Hugging Face under Apache-2.0, are the first production-grade
-open models we measure, and their preprocessing is re-implemented exactly in
-`src/opentsr/models/autoware_onnx.py` (letterbox, normalisation, YOLOX decode and NMS as in
-`autoware_universe`).
+Decided: OpenTSR's main target changes from traffic lights to traffic signs (road sign
+detection and classification). The traffic light work done so far (dataset and implementation
+surveys, S2TLD split manifests, Autoware, COCO-YOLO and DetectionBench replications) is kept as
+a secondary track and is not deleted.
 
-Why: they are the only open, deployed, permissively licensed traffic light models with a public
-accuracy claim (99.81% classification accuracy on TIER IV's internal Japanese test set). Their
-training data is private, so the claim cannot be replicated directly, but cross-domain accuracy
-on public data tells us how far a production classifier transfers and what a map-prior ROI
-pipeline costs in recall.
+Why: decided by the maintainer. The traffic light results remain useful as a reference and
+the shared parts (evaluator, split manifests, licensing policy) carry over to signs.
+
+Alternatives considered: deleting the traffic light work (rejected: the measurements took real
+effort and remain valid); a separate repository for traffic lights (rejected for now: the two
+tracks share the evaluator and conventions, and a second repository doubles maintenance).
+
+## 2026-10-31: Repository layout keeps the two tracks apart
+
+Decided: the repository root (`docs/`, `configs/`, `scripts/`, `src/opentsr/signs/`) belongs to
+traffic signs. Everything specific to traffic lights lives under a `traffic_lights` path
+segment and nowhere else:
+
+- `traffic_lights/` at the root: its README, docs, configs, scripts and Makefile
+- `src/opentsr/traffic_lights/`: its Python package
+- `data/traffic_lights/`, `weights/traffic_lights/`, `runs/traffic_lights/`: its local, gitignored files
+
+Code shared by both tracks sits at the root of `src/opentsr/` (`metrics.py`, `splits.py`) and
+must not import from `opentsr.traffic_lights`. Project-wide decisions stay in this file;
+decisions that only concern traffic lights are in `traffic_lights/docs/decisions.md`.
+
+Why: one rule ("traffic light material always sits under `traffic_lights`") keeps the tracks
+from mixing as the sign work grows, and lets the secondary track be removed or split out later
+with a single `git mv`.
+
+Alternatives considered: symmetric `signs/` and `traffic_lights/` folders at the root
+(rejected: it makes the main track as deep as the secondary one); tags or file name prefixes
+inside shared folders (rejected: easy to get wrong, hard to grep).

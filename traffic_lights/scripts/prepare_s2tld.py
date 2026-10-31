@@ -9,19 +9,19 @@ Steps (each can be skipped with the matching flag):
    ``S2TLD_720x1280`` and ``S2TLD_1080x1920``.
 3. Write a split manifest (``--split-strategy`` random or chunked, seeded) to
    ``<manifest>``, or reuse an existing manifest with ``--manifest`` so that the exact split
-   checked into ``configs/s2tld/splits/`` is used.
+   checked into ``traffic_lights/configs/s2tld/splits/`` is used.
 4. Write a YOLO dataset under ``<root>/yolo/<name>`` (images are symlinked, labels are
    normalised ``cls cx cy w h`` text files) plus ``data.yaml``.
 
 Example (replicating the SCRDet++ random 6:4 protocol)::
 
-    python scripts/prepare_s2tld.py --root data/s2tld --download \
-        --manifest configs/s2tld/splits/random60_seed0.json --name random60
+    python traffic_lights/scripts/prepare_s2tld.py --root data/traffic_lights/s2tld --download \
+        --manifest traffic_lights/configs/s2tld/splits/random60_seed0.json --name random60
 
 Example (OpenTSR chunked benchmark split, 60/10/30)::
 
-    python scripts/prepare_s2tld.py --root data/s2tld \
-        --manifest configs/s2tld/splits/chunked_60_10_30_seed0.json --name chunked
+    python traffic_lights/scripts/prepare_s2tld.py --root data/traffic_lights/s2tld \
+        --manifest traffic_lights/configs/s2tld/splits/chunked_60_10_30_seed0.json --name chunked
 """
 
 from __future__ import annotations
@@ -36,10 +36,10 @@ import sys
 import zipfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from opentsr.datasets.s2tld import S2TLD_CLASSES, load_s2tld  # noqa: E402
-from opentsr.datasets.splits import make_split, read_manifest, write_manifest  # noqa: E402
+from opentsr.traffic_lights.datasets.s2tld import S2TLD_CLASSES, load_s2tld  # noqa: E402
+from opentsr.splits import make_split, read_manifest, write_manifest  # noqa: E402
 
 HF_BASE = "https://huggingface.co/datasets/yangxue/S2TLD/resolve/main/"
 ZIPS = {
@@ -147,7 +147,7 @@ def write_yolo(records, split: dict[str, list[str]], out_dir: Path, classes: lis
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", type=Path, default=Path("data/s2tld"))
+    ap.add_argument("--root", type=Path, default=Path("data/traffic_lights/s2tld"))
     ap.add_argument("--download", action="store_true", help="download the zips if missing")
     ap.add_argument("--manifest", type=Path, required=True,
                     help="split manifest to write (if missing) or reuse (if present)")

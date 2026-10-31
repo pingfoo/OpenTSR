@@ -15,7 +15,7 @@ shard, and YOLO label files ``data/labels/<split>/shard_xxx/<stem>.txt`` (normal
 
 Usage::
 
-    python scripts/prepare_lisa_hf.py --root data/lisa_hf
+    python traffic_lights/scripts/prepare_lisa_hf.py --root data/traffic_lights/lisa_hf
 
 License reminder: LISA is CC BY-NC-SA 4.0 (non-commercial). Used here for evaluation only.
 """
@@ -34,7 +34,7 @@ METADATA_FRAME = 640.0  # metadata.jsonl boxes are expressed in a 640x640 frame
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", type=Path, default=Path("data/lisa_hf"))
+    ap.add_argument("--root", type=Path, default=Path("data/traffic_lights/lisa_hf"))
     ap.add_argument("--splits", default="train,val,test", help="comma separated splits to process")
     args = ap.parse_args()
     wanted = set(args.splits.split(","))

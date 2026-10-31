@@ -18,7 +18,7 @@ from pathlib import Path
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--weights", type=Path, required=True)
-    ap.add_argument("--data", type=Path, required=True, help="data_abs.yaml written by scripts/prepare_lisa_hf.py")
+    ap.add_argument("--data", type=Path, required=True, help="data_abs.yaml written by traffic_lights/scripts/prepare_lisa_hf.py")
     ap.add_argument("--split", default="test")
     ap.add_argument("--imgsz", type=int, default=640)
     ap.add_argument("--batch", type=int, default=8)
