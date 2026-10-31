@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# Tooling
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Data, weights, and run outputs stay out of git
+data/
+datasets/
+weights/
+checkpoints/
+runs/
+outputs/
+wandb/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+*.engine
