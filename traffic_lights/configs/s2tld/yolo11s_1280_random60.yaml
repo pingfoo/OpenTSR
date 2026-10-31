@@ -1,0 +1,20 @@
+# Replication of the SCRDet++ protocol on S2TLD (random 6:4 split, VOC AP at IoU 0.5).
+# Same recipe as yolo11s_1280_chunked.yaml; only the split differs.
+# Run: python traffic_lights/scripts/train_yolo.py --config traffic_lights/configs/s2tld/yolo11s_1280_random60.yaml
+name: s2tld_yolo11s_1280_random60
+model: yolo11s.pt
+data: data/traffic_lights/s2tld/yolo/random60/data.yaml
+split_manifest: traffic_lights/configs/s2tld/splits/random60_seed0.json
+eval_split: test
+train:
+  imgsz: 1280
+  epochs: 60
+  batch: 8
+  seed: 0
+  deterministic: true
+  optimizer: auto
+  lr0: 0.01
+  patience: 20
+  close_mosaic: 10
+  workers: 4
+  pretrained: true

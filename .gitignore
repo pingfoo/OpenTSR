@@ -16,14 +16,15 @@ venv/
 .ruff_cache/
 .DS_Store
 
-# Data, weights, and run outputs stay out of git
-data/
-datasets/
-weights/
-checkpoints/
-runs/
-outputs/
-wandb/
+# Data, weights, and run outputs stay out of git. Anchored to the repository root so that
+# package directories with the same name (for example src/opentsr/traffic_lights/datasets/) are tracked.
+/data/
+/datasets/
+/weights/
+/checkpoints/
+/runs/
+/outputs/
+/wandb/
 *.pt
 *.pth
 *.ckpt

@@ -4,7 +4,13 @@ Guidance for Claude (Claude Code and claude.ai sessions) working in this reposit
 
 ## What this project is
 
-OpenTSR builds an open-source, open-data traffic signal (traffic light) recognition model: detection plus state recognition, at commercial-grade quality. Everything is released openly: code, data, and trained weights. See README.md for the goal statement.
+OpenTSR builds an open-source, open-data traffic sign recognition model (detection plus
+classification) at commercial-grade quality. Everything is released openly: code, data, and
+trained weights. See README.md for the goal statement.
+
+Traffic lights were the original target; that work is kept as a secondary track under
+`traffic_lights/` (see below). Work on traffic signs first unless the maintainer asks for
+traffic lights.
 
 ## Where work happens
 
@@ -18,22 +24,32 @@ OpenTSR builds an open-source, open-data traffic signal (traffic light) recognit
 - Before any push, run `git fetch origin main` and rebase (or merge) so the push lands on top of the latest remote.
 - For a task that takes more than a couple of commits, work on a branch named after the topic (for example `survey-datasets`, `baseline-yolo`) and open a PR into `main`.
 - Commit messages: English, imperative mood, a short subject line and a body that says why.
-- Never commit data, weights, run outputs, or secrets. `.gitignore` already excludes the usual directories; keep it that way.
+- Never commit data, weights, run outputs, or secrets. `.gitignore` already excludes the usual directories (anchored to the root, so a package named `datasets/` is still tracked); keep it that way and check `git status` for files that should have been committed.
 
-## Repository layout (planned; create directories as they become needed)
+## Repository layout (create directories as they become needed)
 
-- `src/opentsr/`: library code (data loading, models, training, evaluation)
-- `scripts/`: entry points (train, evaluate, export, data preparation)
-- `configs/`: experiment and model configs; every reported result must map to a config
-- `docs/`: surveys, design notes, and decisions (see below)
-- `data/`, `weights/`, `runs/`: local only, gitignored; document where the public copies live
+The root belongs to traffic signs. Everything specific to traffic lights sits under a
+`traffic_lights` path segment and nowhere else; never put traffic light files in the root
+`docs/`, `configs/` or `scripts/`, and never put sign files under `traffic_lights`.
+
+- `src/opentsr/`: shared library code used by both tracks (`metrics.py`, `splits.py`). Shared
+  modules and `opentsr.signs` must not import from `opentsr.traffic_lights`.
+- `src/opentsr/signs/`: traffic sign library code (data loading, models, training)
+- `scripts/`, `configs/`, `docs/`: traffic sign entry points, configs, surveys; `docs/` also holds
+  the project-wide `decisions.md` and `third_party.md`
+- `traffic_lights/`: the whole traffic light track (`docs/`, `configs/`, `scripts/`, `Makefile`)
+- `src/opentsr/traffic_lights/`: traffic light library code
+- `data/`, `weights/`, `runs/`: local only, gitignored; traffic light files go in their
+  `traffic_lights/` subdirectory (for example `data/traffic_lights/s2tld`). Document where the
+  public copies live.
+- `Makefile`: sign targets plus `make lights-<target>`, which runs `traffic_lights/Makefile`
 
 ## Documentation
 
 - Write code comments, docs, and commit messages in English. Conversation with the maintainer is in Japanese.
-- Record decisions in `docs/decisions.md` as dated entries: what was decided, why, and the alternatives considered.
-- Record survey results (datasets, OSS implementations, papers) under `docs/`, one file per topic.
-- Keep `docs/third_party.md` listing every dataset, model, and codebase we build on, with its license and source URL. Only use assets whose license allows redistribution under Apache-2.0, or document the exception explicitly.
+- Record decisions as dated entries (what was decided, why, and the alternatives considered): project-wide and sign decisions in `docs/decisions.md`, traffic-light-only decisions in `traffic_lights/docs/decisions.md`.
+- Record survey results (datasets, OSS implementations, papers) one file per topic: under `docs/` for signs, under `traffic_lights/docs/` for traffic lights.
+- Keep `docs/third_party.md` (shared and sign assets) and `traffic_lights/docs/third_party.md` (traffic light assets) listing every dataset, model, and codebase we build on, with its license and source URL. Only use assets whose license allows redistribution under Apache-2.0, or document the exception explicitly.
 - Do not use em dashes in English prose; use periods, commas, or colons.
 
 ## Working principles
