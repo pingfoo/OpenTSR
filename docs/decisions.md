@@ -144,3 +144,21 @@ configs and expected cost in that file rather than run on 2 cores.
 Why: the replicated numbers are either reproduced claims (poojahira 99.71 vs 99.81 claimed,
 CLIP ViT-B/32 zero-shot vs 32.2 in the paper) or measurements no paper gives (open-vocabulary
 AP on GTSDB, VLM multiple-choice on GTSRB); both are needed before a new model is trained.
+
+## 2026-10-31: Dependencies and local files are split per track as well
+
+Decided: the layout rule ("traffic light material only under a `traffic_lights` path segment")
+also covers dependency pins, package extras and local files. `requirements.txt` at the root
+pins the sign track; `traffic_lights/requirements.txt` pins the traffic light track.
+`pyproject.toml` keeps only the shared base (`numpy`, `PyYAML`) as hard dependencies and
+exposes `[signs]`, `[lights]` and `[train]` extras so that an install never mixes the two.
+Local files follow the same split: signs use `data/`, `weights/`, `runs/` directly
+(`data/gtsrb_hf`, `weights/poojahira`, `runs/gtsrb`, ...), traffic lights use
+`data/traffic_lights/`, `weights/traffic_lights/`, `runs/traffic_lights/`. Sign documents under
+`docs/` do not discuss traffic light material; the only shared files are `README.md`,
+`CLAUDE.md`, `Makefile`, `pyproject.toml`, `docs/README.md`, `docs/decisions.md` and
+`docs/third_party.md`.
+
+Why: the maintainer asked that traffic light and sign data, code and documents never mix.
+A root `requirements.txt` that pinned onnxruntime and OpenCV for the Autoware wrappers was the
+last place where the two tracks shared a file by accident.

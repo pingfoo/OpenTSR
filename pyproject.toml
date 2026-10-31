@@ -9,14 +9,16 @@ description = "Open-source, open-data traffic sign recognition (with a secondary
 readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
+# Shared by both tracks (metrics, split manifests). Track-specific packages are extras so that an
+# install never mixes the two: `pip install -e ".[signs]"` or `pip install -e ".[lights]"`.
 dependencies = [
     "numpy",
-    "opencv-python-headless",
-    "onnxruntime",
     "PyYAML",
 ]
 
 [project.optional-dependencies]
+signs = ["torch", "torchvision", "transformers", "open_clip_torch", "timm", "accelerate", "huggingface-hub", "pyarrow", "pillow", "tqdm"]
+lights = ["onnxruntime", "onnx", "opencv-python-headless", "pandas", "pillow", "tqdm", "huggingface-hub"]
 train = ["ultralytics", "torch", "torchvision"]
 
 [tool.setuptools.packages.find]

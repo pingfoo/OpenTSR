@@ -25,7 +25,7 @@ lights-%:
 	$(MAKE) -f traffic_lights/Makefile PY="$(PY)" $*
 
 # ---------------------------------------------------------------------------------------------
-# Traffic sign replications (docs/replication.md). Needs: pip install -r requirements-signs.txt
+# Traffic sign replications (docs/replication.md). Needs: pip install -r requirements.txt
 
 # GTSRB official split from the Hugging Face parquet mirror (312 MB), verified against the official sizes.
 gtsrb:

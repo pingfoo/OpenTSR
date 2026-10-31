@@ -53,7 +53,7 @@ for signs are in (2026-10-31):
 ```bash
 python -m venv .venv && . .venv/bin/activate
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu   # or a CUDA/MPS build
-pip install -r requirements-signs.txt
+pip install -r requirements.txt
 
 make gtsrb                      # GTSRB official split from the Hugging Face mirror (312 MB), verified
 make gtsdb                      # GTSDB training package + test images (1.73 GB)

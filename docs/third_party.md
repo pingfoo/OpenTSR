@@ -57,6 +57,6 @@ they are added to this table when first downloaded.
 
 ## Python dependencies
 
-Pinned in `requirements.txt` (traffic light track) and `requirements-signs.txt` (sign replications).
+Pinned in `requirements.txt` (traffic sign track, root) and `traffic_lights/requirements.txt` (traffic light track).
 Notable licenses: PyTorch (BSD-3-Clause), transformers (Apache-2.0), open_clip (MIT-style notice),
 onnxruntime (MIT), OpenCV (Apache-2.0), NumPy (BSD-3-Clause), Ultralytics (AGPL-3.0, see above).

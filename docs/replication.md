@@ -4,7 +4,7 @@ What we re-ran ourselves, on which data, with which protocol, and what came out.
 this file were done on 2026-10-31 in a claude.ai cloud session (2 CPU cores of an Intel Xeon with
 AVX-512 and AMX, 7 GB RAM, no GPU, Python 3.13, PyTorch 2.15.0+cpu, transformers 5.22.1,
 open_clip 3.3.0, ultralytics 8.4.194 installed only for YOLO-World; pins in
-`requirements-signs.txt`). Every number maps to a script under `scripts/`, a config under
+`requirements.txt`). Every number maps to a script under `scripts/`, a config under
 `configs/gtsrb/` where training is involved, and a JSON file under `runs/` (gitignored;
 regenerate with the `make` targets listed in section 10). See
 `docs/oss_implementations.md` for why these implementations were chosen,
@@ -234,8 +234,6 @@ not a cross-country test.
 
 Open items found on the way:
 
-- The S2TLD reader modules missing from PR #1 (an unanchored `datasets/` ignore pattern) were
-  restored by the maintainer in the `layout-signs-main` branch, which this branch builds on.
 - `bazyl/GTSRB` has 44 output labels in the companion `bazyl/gtsrb-model` (index 43 unused);
   harmless for scoring.
 - The GTSDB ReadMe lists 852 boxes for the training package while the IJCNN 2013 paper
