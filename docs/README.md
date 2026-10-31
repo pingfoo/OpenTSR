@@ -12,5 +12,6 @@ Project-wide documents and the traffic sign track (main). Traffic light document
 | `vlm_and_foundation.md` | CLIP-style zero-shot, large multimodal models, open-vocabulary detectors, self-supervised backbones and generative data for signs. |
 | `requirements_and_robustness.md` | What commercial-grade TSR means (EU ISA, Euro NCAP, Japan), robustness benchmarks, adversarial attack and defence code, draft target specification. |
 | `replication.md` | What we replicated on signs, the exact protocol, the measured numbers, and the GPU runs that remain. |
+| `dataset_catalog.md` | The generated, illustrated catalog of the representative sign datasets (class definitions next to seeded samples) and how to rebuild it. |
 
 Conventions: English, no em dashes, every number maps to a config under `configs/` and a commit.
