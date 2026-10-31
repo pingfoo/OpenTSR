@@ -293,7 +293,7 @@ OVERVIEW = [
     ("CURE-TSR (2017)", "ベルギー実映像＋合成", "分類（頑健性）", "2,206,106 枚", "14（12 劣化 x 5 レベル）",
      "CC BY 4.0（Zenodo 版）", "Zenodo zip 全体のファイル名解析 + 実例"),
     ("日本 道路標識令", "日本", "（公開データセットなし）", "163 種類 / 237 図柄（法令別表）", "本標識 4 分類 + 補助",
-     "法令由来の図柄（著作権法第 13 条）", "Commons の公式図柄 SVG"),
+     "法令由来の図柄（著作権法第 13 条）", "国土交通省「道路標識一覧」の公式図柄 221 点"),
 ]
 
 NOT_INCLUDED = [
@@ -714,7 +714,7 @@ GTSRB の 43 クラスに限定したサブセット（クラスあたり 500 �
                              "https://cg.cs.tsinghua.edu.cn/traffic-sign/"))
 
     # ---------------------------------------------------------------- MTSD
-    def mtsd(self, n_frames: int = 4, n_cards: int = 40) -> None:
+    def mtsd(self, n_frames: int = 4, n_cards: int = 400) -> None:
         """MTSD from a sample of official images + annotation JSON (data/mtsd_official)."""
         root = self.data / "mtsd_official"
         ann_dir, img_dir = root / "annotations", root / "images"
