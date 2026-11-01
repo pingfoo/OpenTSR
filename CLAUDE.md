@@ -47,6 +47,7 @@ The root belongs to traffic signs. Everything specific to traffic lights sits un
 ## Documentation
 
 - Write code comments, docs, and commit messages in English. Conversation with the maintainer is in Japanese.
+- Every Markdown file in `docs/` has a Japanese translation under `docs/ja/` with the same file name. The English file is authoritative. When you change an English doc, update its translation in the same commit; when you add one, add its translation too.
 - Record decisions as dated entries (what was decided, why, and the alternatives considered): project-wide and sign decisions in `docs/decisions.md`, traffic-light-only decisions in `traffic_lights/docs/decisions.md`.
 - Record survey results (datasets, OSS implementations, papers) one file per topic: under `docs/` for signs, under `traffic_lights/docs/` for traffic lights.
 - Keep `docs/third_party.md` (shared and sign assets) and `traffic_lights/docs/third_party.md` (traffic light assets) listing every dataset, model, and codebase we build on, with its license and source URL. Only use assets whose license allows redistribution under Apache-2.0, or document the exception explicitly.
