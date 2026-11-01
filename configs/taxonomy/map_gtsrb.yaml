@@ -1,0 +1,50 @@
+# GTSRB / GTSDB class ids (0 to 42) to coarse_v1 families. Keys are the integer class ids as strings.
+dataset: gtsrb
+taxonomy: coarse_v1
+map:
+  "0": prohibitory_round_red
+  "1": prohibitory_round_red
+  "2": prohibitory_round_red
+  "3": prohibitory_round_red
+  "4": prohibitory_round_red
+  "5": prohibitory_round_red
+  "6": end_restriction
+  "7": prohibitory_round_red
+  "8": prohibitory_round_red
+  "9": prohibitory_round_red
+  "10": prohibitory_round_red
+  "11": warning_triangle
+  "12": priority_road
+  "13": yield
+  "14": stop
+  "15": prohibitory_round_red
+  "16": prohibitory_round_red
+  "17": prohibitory_round_red
+  "18": warning_triangle
+  "19": warning_triangle
+  "20": warning_triangle
+  "21": warning_triangle
+  "22": warning_triangle
+  "23": warning_triangle
+  "24": warning_triangle
+  "25": warning_triangle
+  "26": warning_triangle
+  "27": warning_triangle
+  "28": warning_triangle
+  "29": warning_triangle
+  "30": warning_triangle
+  "31": warning_triangle
+  "32": end_restriction
+  "33": mandatory_round_blue
+  "34": mandatory_round_blue
+  "35": mandatory_round_blue
+  "36": mandatory_round_blue
+  "37": mandatory_round_blue
+  "38": mandatory_round_blue
+  "39": mandatory_round_blue
+  "40": mandatory_round_blue
+  "41": end_restriction
+  "42": end_restriction
+# The GTSDB competition categories, for reference: prohibitory = {0..5,7..10,15,16}, mandatory = {33..40},
+# danger = {11,18..31}; everything else (6,12,13,14,17,32,41,42) is "other" in the competition but
+# gets its own family here.

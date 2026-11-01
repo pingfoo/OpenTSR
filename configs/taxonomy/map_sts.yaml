@@ -1,0 +1,26 @@
+# Swedish Traffic Signs (STS, Larsson & Felsberg 2011) sign names to coarse_v1 families.
+# Names are the last field of annotations.txt; the dataset's own type (second to last field) is
+# PROHIBITORY, MANDATORY, WARNING, INFORMATION, OTHER or UNREADABLE.
+dataset: sts
+taxonomy: coarse_v1
+map:
+  30_SIGN: prohibitory_round_red
+  50_SIGN: prohibitory_round_red
+  60_SIGN: prohibitory_round_red
+  70_SIGN: prohibitory_round_red
+  80_SIGN: prohibitory_round_red
+  90_SIGN: prohibitory_round_red
+  100_SIGN: prohibitory_round_red
+  110_SIGN: prohibitory_round_red
+  120_SIGN: prohibitory_round_red
+  NO_PARKING: prohibitory_round_blue
+  NO_STOPPING_NO_STANDING: prohibitory_round_blue
+  STOP: stop
+  GIVE_WAY: yield
+  PRIORITY_ROAD: priority_road
+  PEDESTRIAN_CROSSING: information_square_blue
+  PASS_RIGHT_SIDE: mandatory_round_blue
+  PASS_LEFT_SIDE: mandatory_round_blue
+  PASS_EITHER_SIDE: mandatory_round_blue
+  OTHER: other
+  URDBL: other
