@@ -1,0 +1,19 @@
+# All stages on, with the frame-count parameters set for sequences labelled at less than 1 fps
+# (STS annotates every fifth raw frame, about 2 s apart): one frame confirms a track and one
+# frame is enough to vote, and memory holds a sign for 6 s. Use full.yaml for 10 fps and up.
+name: full_sparse
+description: production-style configuration tuned for sparsely labelled sequences
+detector:   {type: precomputed, min_score: 0.3}
+tracker:    {type: motion, iou_thr: 0.3, center_factor: 1.5, first_factor: 5.0, scale_ratio: 2.0, max_gap: 1, confirm_frames: 1}
+memory:     {type: ttl, ttl_s: 6.0}
+classifier: {type: precomputed, reject_below: 0.0}
+reader:     null
+relevance:  {type: geometric, side_fraction: 0.8}
+fusion:     null
+decision:   {type: vote, min_frames: 1, hysteresis: 0.2, weighted: true}
+defense:    null
+presets:
+  no_temporal:        {tracker: null, memory: null, decision: {type: per_frame_argmax}}
+  tracking_only:      {memory: null}
+  unweighted_vote:    {decision: {type: vote, min_frames: 1, hysteresis: 0.2, weighted: false}}
+  confirm_2:          {tracker: {type: motion, max_gap: 1, confirm_frames: 2}, decision: {type: vote, min_frames: 2, hysteresis: 0.2}}

@@ -1,0 +1,12 @@
+# The academic baseline: a (fine-class) detector applied frame by frame, nothing else.
+name: academic
+description: per-frame detector output, no tracking, memory, relevance or voting
+detector:   {type: precomputed, min_score: 0.3}
+tracker:    null
+memory:     null
+classifier: {type: precomputed}
+reader:     null
+relevance:  null
+fusion:     null
+decision:   {type: per_frame_argmax}
+defense:    null
