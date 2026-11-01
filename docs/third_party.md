@@ -37,7 +37,7 @@ they are added to this table when first downloaded.
 | google/owlv2-base-patch16-ensemble (revision `cfd3195ba4ea9592eec887ded089f4c08eff231d`) | https://huggingface.co/google/owlv2-base-patch16-ensemble | "apache-2.0" (model card) | Zero-shot class-agnostic sign detection baseline on GTSDB. Permissive; could be used for auto-labelling. |
 | HuggingFaceTB/SmolVLM-500M-Instruct (revision `a7da5b986cb5`), Qwen/Qwen2-VL-2B-Instruct (revision `895c3a49bc3f`) | https://huggingface.co/HuggingFaceTB/SmolVLM-500M-Instruct, https://huggingface.co/Qwen/Qwen2-VL-2B-Instruct | "apache-2.0" (both model cards) | Multiple-choice VLM probes on a GTSRB subset. |
 | Panoramax/classify_de_road_signs (`classify_de_road_signs.pt`, 26,282,865 bytes, revision `5360aa6f4ef6c7b1998044b18d00b4d0b1a5a790`) | https://huggingface.co/Panoramax/classify_de_road_signs | "etalab-2.0" (model card); Ultralytics checkpoint format | Reproduction of the card's 0.986 on its validation crops; loaded only through the restricted unpickler in `scripts/eval_panoramax_de_classifier.py`. Not a release candidate (AGPL-3.0 toolchain). |
-| Ultralytics YOLO-World v2 (`yolov8s-worldv2.pt`) | https://github.com/ultralytics/ultralytics (weights from the ultralytics/assets releases) | "AGPL-3.0" (same as YOLO11 above) | Open-vocabulary detection baseline on GTSDB only; not a release candidate. |
+| Ultralytics YOLO-World v2 (`yolov8s-worldv2.pt`) | https://github.com/ultralytics/ultralytics (weights from the ultralytics/assets releases) | "AGPL-3.0" (same as YOLO11 below) | Open-vocabulary detection baseline on GTSDB only; not a release candidate. |
 
 ## Shared datasets
 

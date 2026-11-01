@@ -565,7 +565,7 @@ Grounding DINO, YOLO-World, GLIP and Florence-2 all pretrain on Objects365.
   (https://arxiv.org/pdf/2507.23331, abstract and Section 1).
 - No paper reporting OWL-ViT / OWLv2, YOLO-World, YOLOE, Florence-2, Detic, GLIP or DINO-X on GTSDB,
   TT100K or MTSD was found with the queries used (web search 2026-10-31); treat as an open question and see
-  replication experiment 6 in F.3.
+  replication experiment 7 in F.3.
 
 ### C.3 Licenses of open-vocabulary detectors and segmenters (for OpenTSR)
 
