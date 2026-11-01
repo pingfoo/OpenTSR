@@ -5,7 +5,7 @@
 # "lights-" prefix, for example `make lights-s2tld` or `make lights-replicate-autoware`.
 PY ?= python
 
-.PHONY: test help gtsrb gtsdb replicate-gtsrb-cnn replicate-gtsrb-released replicate-gtsrb-clip replicate-gtsrb-vlm replicate-gtsdb-openvocab replicate-panoramax
+.PHONY: test help gtsrb gtsdb replicate-gtsrb-cnn replicate-gtsrb-released replicate-gtsrb-clip replicate-gtsrb-vlm replicate-gtsdb-openvocab replicate-panoramax catalog-data catalog
 
 help:
 	@echo "make test                       run the unit tests"
@@ -16,6 +16,8 @@ help:
 	@echo "make replicate-gtsrb-vlm        SmolVLM / Qwen2-VL multiple choice on a stratified subset"
 	@echo "make replicate-gtsdb-openvocab  OWLv2 and YOLO-World class-agnostic detection on GTSDB, GTSDB-crop check"
 	@echo "make replicate-panoramax        Panoramax German sign classifier on its CC BY-SA validation crops"
+	@echo "make catalog-data               extra downloads for the dataset catalog (Synset, TT100K shards, MTSD sample, CURE-TSR, MLIT list)"
+	@echo "make catalog                    build the illustrated dataset catalog (runs/catalog/catalog.html and .pdf)"
 	@echo "make lights-<target>            run a target from traffic_lights/Makefile (see that file)"
 
 test:
@@ -23,6 +25,21 @@ test:
 
 lights-%:
 	$(MAKE) -f traffic_lights/Makefile PY="$(PY)" $*
+
+# Dataset catalog (docs/dataset_catalog.md). Needs `make gtsrb gtsdb replicate-panoramax` data first; the PDF step
+# needs playwright with a Chromium build (`pip install playwright && playwright install chromium`).
+catalog-data:
+	hf download FraunhoferIOSB/Synset-Signset-Germany-GTSRB-Subset cycles/validation.parquet --repo-type dataset --local-dir data/synset_signset
+	hf download finedet/tt100k categories.csv data/test-00003-of-00004.parquet data/train-00005-of-00007.parquet data/train-00006-of-00007.parquet --repo-type dataset --local-dir data/tt100k_hf
+	$(PY) scripts/sample_mtsd_official.py --n 320 --out data/mtsd_official
+	$(PY) scripts/sample_mtsd_official.py --n 900 --seed 1 --out data/mtsd_official
+	mkdir -p data/cure_tsr data/japan && curl -sS -L -C - -o data/cure_tsr/CURE-TSR.zip "https://zenodo.org/records/3903066/files/CURE-TSR.zip?download=1"
+	curl -sS -L -o data/japan/ichiran.pdf https://www.mlit.go.jp/road/sign/sign/douro/ichiran.pdf
+	$(PY) scripts/parse_ja_wikipedia_signs.py --out data/japan/wikipedia_signs.json
+	$(PY) scripts/cut_mlit_sign_list.py --pdf data/japan/ichiran.pdf --out data/japan/mlit --names-json data/japan/wikipedia_signs.json
+
+catalog:
+	$(PY) scripts/make_dataset_catalog.py --out runs/catalog --seed 0 --pdf --japan-json data/japan/mlit/signs.json --japan-overview data/japan/mlit/page.png
 
 # ---------------------------------------------------------------------------------------------
 # Traffic sign replications (docs/replication.md). Needs: pip install -r requirements.txt

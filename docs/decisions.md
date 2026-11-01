@@ -162,3 +162,24 @@ Local files follow the same split: signs use `data/`, `weights/`, `runs/` direct
 Why: the maintainer asked that traffic light and sign data, code and documents never mix.
 A root `requirements.txt` that pinned onnxruntime and OpenCV for the Autoware wrappers was the
 last place where the two tracks shared a file by accident.
+
+## 2026-11-01: The dataset catalog is generated, seeded and built from official annotations
+
+Decision: the illustrated dataset catalog (`docs/dataset_catalog.md`, `scripts/make_dataset_catalog.py`)
+is a generated artefact, not a hand-assembled document. Samples are drawn with a fixed seed from
+the same local data files the replications use, every thumbnail is traceable to a file and a
+box, and the catalog is rebuilt with `make catalog` whenever a dataset is added. For MTSD the
+catalog samples the official annotation JSON (from the `NgTMDuc/cl_dataset` mirror) instead of
+the convenient parquet mirrors, because the parquet mirrors' integer categories do not match
+their own label file. For Japan, where no dataset exists, the catalog uses the pictograms of the
+MLIT 道路標識一覧 cut into tiles, and that list is the class inventory for the Japan track.
+
+Why: the maintainer asked for a comprehensive catalog with class definitions and real samples.
+A hand-made PDF would go stale with the first new dataset and could not be checked; a generated
+one can be regenerated and diffed. The MTSD mirror problem was found only because the crops were
+looked at, which is the point of the catalog.
+
+Alternatives considered: pasting figures from the dataset papers (no license to redistribute,
+and not reproducible); Wikimedia Commons SVGs for Japan (rate limited for automated clients, and
+the MLIT list is the official source anyway); the Roboflow Japanese sets (too small and not
+redistributable).
