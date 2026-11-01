@@ -1,0 +1,17 @@
+# Traffic light track (secondary): dependencies of traffic_lights/scripts/.
+# Versions pinned to what was used for the numbers in traffic_lights/docs/replication.md (2026-10-31).
+# Install from the repository root: pip install -r traffic_lights/requirements.txt
+# PyTorch: install the build that matches your hardware first, for example
+#   CPU:  pip install torch==2.15.0 torchvision==0.29.2 --index-url https://download.pytorch.org/whl/cpu
+#   CUDA: see https://pytorch.org/get-started/locally/
+#   macOS (MPS): pip install torch==2.15.0 torchvision==0.29.2
+ultralytics==8.4.194
+onnxruntime==1.31.1
+onnx==1.23.2
+opencv-python-headless==5.0.0.93
+numpy==2.5.4
+pillow==13.0.0
+PyYAML==6.0.3
+pandas==3.1.0
+tqdm==4.70.1
+huggingface-hub>=0.26

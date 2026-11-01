@@ -79,3 +79,86 @@ with a single `git mv`.
 Alternatives considered: symmetric `signs/` and `traffic_lights/` folders at the root
 (rejected: it makes the main track as deep as the secondary one); tags or file name prefixes
 inside shared folders (rejected: easy to get wrong, hard to grep).
+
+## 2026-10-31: GTSRB (official split) is the first sign classification benchmark; GTSDB for detection checks
+
+Decided: the official GTSRB split (39,209 train / 12,630 test, 43 classes) is the first fixed
+classification benchmark for signs, read from the Hugging Face mirror `bazyl/GTSRB` (parquet
+export of the Kaggle release) with the revision and sha256 pinned in `scripts/prepare_gtsrb.py`
+and the split sizes and class ids checked against the official numbers before use. The
+`tanganke/gtsrb` mirror is not used for training because its 26,640-image train split is the
+IJCNN 2011 Phase I subset, not the official training set; numbers trained on it are flagged as
+such when compared. GTSDB is the detection check: in cloud sessions the 600 training frames with
+the official gt.txt (852 boxes, 94 negatives) are used, because the 300 test frames' ground
+truth only exists in the official FullIJCNN2013 archive hosted on sid.erda.dk, which the cloud
+sessions cannot reach; the scripts take `--full-gt` so that the maintainer can score the real
+test split locally.
+
+Why: GTSRB is the one sign dataset whose terms ("The data is free to use", cite the paper) allow
+redistribution of derived crops and labels, whose test labels are public, and for which the
+literature gives dozens of comparable numbers from 2011 to 2026. GTSDB shares its class ids and
+license statement ("free to use this data package for any purpose").
+
+Alternatives considered: TT100K or MTSD as the first detection benchmark (rejected for now:
+both non-commercial, both large; they stay as pointer-based evaluation sets, see
+`docs/datasets.md` section 8); torchvision's GTSRB loader (rejected: downloads
+from sid.erda.dk).
+
+## 2026-10-31: Benchmark tiers for signs follow the traffic light policy
+
+Decided: classification and detection benchmarks for signs are organised in the same tiers as
+for traffic lights. Tier A (redistributable, OpenTSR ships fixed splits): GTSRB, GTSDB, Synset
+Signset Germany (CC BY 4.0), CURE-TSR and STS from their Zenodo CC BY 4.0 copies, ZOD (CC BY-SA
+4.0, share-alike on derived labels) and the Panoramax crop sets (CC BY-SA 4.0). Tier B
+(non-commercial, test labels public, pointer distribution only): TT100K, MTSD, DFG, BTSD, RTSD,
+CCTSDB. Tier C (registration): none needed yet. Japan has no public set in any tier, so a
+Japanese benchmark has to be built from Mapillary imagery (CC BY-SA 4.0) or own recordings plus
+synthetic renders of the public-domain 標識令 pictograms. Details and sizes in
+`docs/datasets.md` section 8.
+
+Why: same reasoning as for traffic lights: anything OpenTSR redistributes must be usable
+commercially, and non-commercial sets can still be used to report numbers.
+
+## 2026-10-31: Third-party checkpoints are loaded only through restricted unpicklers
+
+Decided: Ultralytics-style `.pt` files from third parties (full pickles) are not loaded with
+`YOLO()` or `torch.load(weights_only=False)` in cloud sessions. `scripts/eval_panoramax_de_classifier.py`
+shows the pattern: disassemble the pickle with `pickletools`, refuse anything outside an
+allow-list of torch / torchvision / ultralytics module classes, then load with
+`torch.load(weights_only=True)` after registering exactly those classes. State-dict
+checkpoints (for example poojahira's `model_40.pth`) load with the default `weights_only=True`.
+
+Why: a pickle can execute arbitrary code at load time; a survey that pulls weights from dozens
+of unknown accounts must not run them blindly. The restricted loader costs nothing for
+well-formed checkpoints.
+
+## 2026-10-31: CPU replications for signs define the comparison floor; GPU runs are queued, not improvised
+
+Decided: the CPU-only replications in `docs/replication.md` (from-scratch CNNs on
+GTSRB, released checkpoints on the official test split, CLIP zero-shot (SigLIP queued), small VLMs in
+multiple choice, open-vocabulary detectors on GTSDB, Panoramax's German classifier on its own
+validation set) are the reference points that the first OpenTSR models must beat. Training a
+detector on GTSDB / ZOD / TT100K and fine-tuning a VLM are GPU tasks and are listed with
+configs and expected cost in that file rather than run on 2 cores.
+
+Why: the replicated numbers are either reproduced claims (poojahira 99.71 vs 99.81 claimed,
+CLIP ViT-B/32 zero-shot vs 32.2 in the paper) or measurements no paper gives (open-vocabulary
+AP on GTSDB, VLM multiple-choice on GTSRB); both are needed before a new model is trained.
+
+## 2026-10-31: Dependencies and local files are split per track as well
+
+Decided: the layout rule ("traffic light material only under a `traffic_lights` path segment")
+also covers dependency pins, package extras and local files. `requirements.txt` at the root
+pins the sign track; `traffic_lights/requirements.txt` pins the traffic light track.
+`pyproject.toml` keeps only the shared base (`numpy`, `PyYAML`) as hard dependencies and
+exposes `[signs]`, `[lights]` and `[train]` extras so that an install never mixes the two.
+Local files follow the same split: signs use `data/`, `weights/`, `runs/` directly
+(`data/gtsrb_hf`, `weights/poojahira`, `runs/gtsrb`, ...), traffic lights use
+`data/traffic_lights/`, `weights/traffic_lights/`, `runs/traffic_lights/`. Sign documents under
+`docs/` do not discuss traffic light material; the only shared files are `README.md`,
+`CLAUDE.md`, `Makefile`, `pyproject.toml`, `docs/README.md`, `docs/decisions.md` and
+`docs/third_party.md`.
+
+Why: the maintainer asked that traffic light and sign data, code and documents never mix.
+A root `requirements.txt` that pinned onnxruntime and OpenCV for the Autoware wrappers was the
+last place where the two tracks shared a file by accident.

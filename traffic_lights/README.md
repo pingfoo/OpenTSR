@@ -37,6 +37,7 @@ Pending: YOLO11s/11n fine-tuning on S2TLD (GPU, `make lights-train-s2tld`).
 From the repository root, with the virtualenv active:
 
 ```bash
+pip install -r traffic_lights/requirements.txt   # the track has its own pins; signs use the root requirements.txt
 make lights-s2tld               # download S2TLD (1.4 GB), build YOLO datasets from the checked-in splits
 make lights-replicate-autoware  # CPU replication of the Autoware models
 make lights-train-s2tld         # GPU training runs

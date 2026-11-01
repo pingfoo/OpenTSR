@@ -1,0 +1,9 @@
+# Same LeNet-5 without augmentation: the plain Udacity recipe (normalised grayscale only).
+model: lenet5_gray
+image_size: 32
+epochs: 30
+batch_size: 128
+seed: 0
+optimizer: {name: adam, lr: 0.001}
+schedule: cosine
+augmentation: {}
