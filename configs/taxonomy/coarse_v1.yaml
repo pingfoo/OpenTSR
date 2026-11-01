@@ -1,0 +1,19 @@
+# OpenTSR coarse taxonomy v1 (docs/system_design.md section 3).
+# Shape and colour families that a detector can separate without reading digits or pictograms,
+# chosen so that the same family exists in Germany, Sweden, Belgium, the US and Japan. Fine
+# classes live in the per-region taxonomies; every dataset ships a mapping file next to this one.
+version: 1
+families:
+  prohibitory_round_red:   {shape: circle,   colour: white ground, red border; includes the red no-entry disc and speed limits}
+  prohibitory_round_blue:  {shape: circle,   colour: blue ground, red border or cross (no parking, no stopping)}
+  mandatory_round_blue:    {shape: circle,   colour: blue ground, white pictogram}
+  end_restriction:         {shape: circle,   colour: white or grey ground, black strike bar}
+  warning_triangle:        {shape: triangle, colour: red border, point up (Vienna convention)}
+  warning_diamond:         {shape: diamond,  colour: yellow ground, black pictogram (US, Japan, Australia)}
+  yield:                   {shape: triangle, colour: point down}
+  stop:                    {shape: octagon,  colour: red ground (also the Japanese inverted triangle stop until 2017 forms)}
+  priority_road:           {shape: diamond,  colour: yellow centre, white border}
+  information_square_blue: {shape: rectangle or square, colour: blue ground (crossing, parking, one way, motorway)}
+  guide_sign:              {shape: rectangle, colour: green or blue direction and route boards}
+  supplementary_plate:     {shape: rectangle, colour: white ground, black text or pictogram, attached below a sign}
+  other:                   {shape: any, colour: any, note: signs outside the families above, unreadable signs, sign backs}

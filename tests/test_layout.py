@@ -85,3 +85,11 @@ def test_checked_in_s2tld_manifests_are_readable():
              for name in ("chunked_60_10_30_seed0.json", "random60_seed0.json")}
     assert sizes["chunked_60_10_30_seed0.json"] == {"test": 1800, "train": 3386, "val": 600}
     assert sizes["random60_seed0.json"] == {"test": 2314, "train": 3472}
+
+
+def test_every_sign_doc_has_a_japanese_translation():
+    # CLAUDE.md: every Markdown file in docs/ has a translation under docs/ja/ with the same name.
+    docs = ROOT / "docs"
+    english = sorted(p.name for p in docs.glob("*.md"))
+    japanese = sorted(p.name for p in (docs / "ja").glob("*.md"))
+    assert english == japanese

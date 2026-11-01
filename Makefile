@@ -5,7 +5,7 @@
 # "lights-" prefix, for example `make lights-s2tld` or `make lights-replicate-autoware`.
 PY ?= python
 
-.PHONY: test help gtsrb gtsdb replicate-gtsrb-cnn replicate-gtsrb-released replicate-gtsrb-clip replicate-gtsrb-vlm replicate-gtsdb-openvocab replicate-panoramax catalog-data catalog
+.PHONY: test help sts sts-events ablation-sim gtsrb gtsdb replicate-gtsrb-cnn replicate-gtsrb-released replicate-gtsrb-clip replicate-gtsrb-vlm replicate-gtsdb-openvocab replicate-panoramax catalog-data catalog
 
 help:
 	@echo "make test                       run the unit tests"
@@ -18,10 +18,23 @@ help:
 	@echo "make replicate-panoramax        Panoramax German sign classifier on its CC BY-SA validation crops"
 	@echo "make catalog-data               extra downloads for the dataset catalog (Synset, TT100K shards, MTSD sample, CURE-TSR, MLIT list)"
 	@echo "make catalog                    build the illustrated dataset catalog (runs/catalog/catalog.html and .pdf)"
+	@echo "make sts                        fetch the STS annotation files (add IMAGES=1 for the 2 x 1.5 GB annotated frames)"
+	@echo "make sts-events                 regenerate configs/sts/events_*.json from the annotations"
+	@echo "make ablation-sim               run every system variant on STS with simulated detections (harness check)"
 	@echo "make lights-<target>            run a target from traffic_lights/Makefile (see that file)"
 
 test:
 	$(PY) -m pytest -q tests
+
+# Swedish Traffic Signs (docs/pipeline.md). Annotations only by default; IMAGES=1 adds Part0 of each set.
+sts:
+	$(PY) scripts/prepare_sts.py --root data/sts $(if $(IMAGES),--images,)
+
+sts-events:
+	$(PY) scripts/make_sts_events.py --root data/sts --out configs/sts
+
+ablation-sim:
+	$(PY) scripts/run_ablation.py --simulate --config configs/system/full_sparse.yaml --sets Set1 Set2 --out runs/ablation/sts_sim
 
 lights-%:
 	$(MAKE) -f traffic_lights/Makefile PY="$(PY)" $*

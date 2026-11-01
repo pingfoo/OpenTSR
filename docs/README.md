@@ -15,6 +15,7 @@ Project-wide documents and the traffic sign track (main). Traffic light document
 | `dataset_catalog.md` | The generated, illustrated catalog of the representative sign datasets (class definitions next to seeded samples) and how to rebuild it. |
 | `commercial_tsr.md` | Survey memo on production TSR systems: documented evidence (patents, supplier papers, product descriptions, black-box tests, SoC toolchains), the inferred detect-track-classify architecture, and what it implies for OpenTSR. |
 | `benchmark.md` | Draft benchmark specification: three layers (crops, frames, sign-pass events in sequences), data and licenses per layer, metrics, robustness protocol, baselines to reimplement, reporting rules. |
+| `pipeline.md` | Phase 0 deliverable: the switchable pipeline skeleton as implemented, STS as the first L3 set (license check, annotation format, event files), evaluator conventions, the simulated ablation harness check and the remaining phase 0 steps. |
 | `system_design.md` | Draft system design: the switchable production-style pipeline (detector, tracker, memory, classifier, reader, relevance, fusion, decision, defense), taxonomy, deployment cost, adversarial evaluation at crop, frame and event level, claims, risks and phases. |
 
 Conventions: English, no em dashes, every number maps to a config under `configs/` and a commit.

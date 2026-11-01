@@ -2,7 +2,9 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import torch
+import pytest
+
+torch = pytest.importorskip("torch")  # the signs extra; the pure-Python tests run without it
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 

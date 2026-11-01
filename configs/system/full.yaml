@@ -1,0 +1,18 @@
+# Every stage on. Model-backed stage types (yolox_coarse, convnext_atto, parseq_digits, osm_prior,
+# defenses) are placeholders until their stages are registered; the model-free types below
+# (precomputed, iou, ttl, geometric, vote) run today on dumped detections.
+name: full
+description: production-style configuration, all stages on
+detector:   {type: precomputed, min_score: 0.3}
+tracker:    {type: motion, iou_thr: 0.3, center_factor: 1.5, first_factor: 5.0, scale_ratio: 2.0, max_gap: 2, confirm_frames: 2}
+memory:     {type: ttl, ttl_s: 3.0}
+classifier: {type: precomputed, reject_below: 0.0}
+reader:     null   # parseq_digits once the OCR stage exists
+relevance:  {type: geometric, side_fraction: 0.8}
+fusion:     null   # osm_prior once the fusion stage exists
+decision:   {type: vote, min_frames: 2, hysteresis: 0.2, weighted: true}
+defense:    null
+presets:
+  no_temporal:        {tracker: null, memory: null, decision: {type: per_frame_argmax}}
+  tracking_only:      {memory: null}
+  unweighted_vote:    {decision: {type: vote, min_frames: 2, hysteresis: 0.2, weighted: false}}

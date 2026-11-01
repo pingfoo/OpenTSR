@@ -155,3 +155,19 @@ switch each stage off and measure how the attack success rate changes.
 Decisions to record in `decisions.md` early: training framework (Apache-2.0 family), coarse
 taxonomy and mapping tables, tracker and reader choices, the event annotation protocol, and how
 CARLA evidence is weighted against real sequences.
+
+## Amendments
+
+### 2026-11-01 (phase 0 implementation, see `pipeline.md`)
+
+- The skeleton exists under `src/opentsr/signs/pipeline/` with the nine slots of section 2 and
+  `null` = pass-through. What "off" means per stage is now fixed in code: memory off is a
+  zero-TTL memory (tracks still vote while visible), classifier off emits the detector's class,
+  decision off is per-frame argmax.
+- A `tracker: motion` option (the same association rule as the ground-truth linker) was added
+  next to `tracker: iou`, because IoU association fails on sequences labelled every 2 s.
+  ByteTrack and Kalman prediction remain planned options for full frame rate.
+- `configs/system/full_sparse.yaml` is the all-on configuration for sparsely labelled sets;
+  `full.yaml` keeps the 10 fps and above settings. The ablation driver `scripts/run_ablation.py`
+  exists and produces the one-table output of section 2 for L3; the L1 and L2 columns and the
+  latency column are added when the model-backed stages exist.

@@ -1,0 +1,18 @@
+# CURE-TSR sign types (01 to 14, Belgian signs) to coarse_v1 families.
+dataset: cure_tsr
+taxonomy: coarse_v1
+map:
+  "01_speed_limit": prohibitory_round_red
+  "02_goods_vehicles": prohibitory_round_red
+  "03_no_overtaking": prohibitory_round_red
+  "04_no_stopping": prohibitory_round_blue
+  "05_no_parking": prohibitory_round_blue
+  "06_stop": stop
+  "07_bicycle": warning_triangle
+  "08_hump": warning_triangle
+  "09_no_left": prohibitory_round_red
+  "10_no_right": prohibitory_round_red
+  "11_priority_to": warning_triangle
+  "12_no_entry": prohibitory_round_red
+  "13_yield": yield
+  "14_parking": information_square_blue
